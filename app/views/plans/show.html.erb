@@ -1,0 +1,64 @@
+<a href="/logout">Logout</a>
+
+<h1><%= @plan.name %> <%= Money.new(@plan.amount, @plan.currency).format %>/<%= @plan.interval %></h1>
+<p><%= PLANS_DESCRIPTIONS[@plan.name.to_sym] %></p>
+
+<p>Payment Method</p>
+
+<% if @payment_method.present? %>
+	<p><%= @payment_method.vendor %> <%= @payment_method.card_type %> ending in <%= @payment_method.last_4 %></p>
+
+<% else %>
+	<form action="/charge" method="post" id="payment-form">
+	  <div class="form-row">
+	    <label for="card-element">
+	      Credit or debit card
+	    </label>
+	    <div id="card-element">
+	      <!-- a Stripe Element will be inserted here. -->
+	    </div>
+
+	    <!-- Used to display form errors -->
+	    <div id="card-errors" role="alert"></div>
+	  </div>
+
+	  <button>Submit Payment</button>
+	</form>
+<% end %>
+
+<h2>Member <%= Money.new(@plan.amount, @plan.currency).format %></h2>
+
+<%= form_with scope: :plans, url: plans_path, local: true do |form| %>
+	<% if @plan.metadata.num_free_guests.to_i > 0 %>
+		<p>Add 1-<%= @plan.metadata.num_free_guests %> FREE Guests</p>
+		<p>FREE</p>
+		<select name="num_free_guests">
+			<%= (0.. @plan.metadata.num_free_guests.to_i).each do |n| %>
+				<option><%= n %></option>
+			<% end %>
+		</select>
+	<% end %>
+
+
+	<% if @plan.metadata.num_free_guests.to_i > 0 %>	
+		<p>Add More Guests</p>
+	<% else %>
+		<p>Add Guests</p>
+	<% end %>
+
+	<p><%= Money.new(@plan.metadata.price_per_guest, @plan.currency).format %>/<%= @plan.interval %></p>
+	<select name="num_paid_guests">
+		<%= (0..100).each do |n| %>
+			<option><%= n %></option>
+		<% end %>
+	</select>
+
+	<%= form.hidden_field 'id', value: @plan.id %>
+
+	<%= form.submit "Checkout" %>
+<% end %>
+
+<script> window.stripe_api_key = "<%= Rails.application.secrets[:publishable_stripe_api_key] %>" </script>
+<%= javascript_include_tag 'payment_method' %>
+
+

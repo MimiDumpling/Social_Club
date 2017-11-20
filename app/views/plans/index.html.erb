@@ -1,0 +1,20 @@
+<a href="/logout">Logout</a>
+
+<h1>Subscription Plans</h1>
+
+<% @plans.each do |plan| %>
+  <h2><%= plan.name %> <%= Money.new(plan.amount, plan.currency).format %>/<%= plan.interval %></h2>
+  <p><%= PLANS_DESCRIPTIONS[plan.name.to_sym] %></p>
+
+  <% if  @subscriptions.include?(plan.id) %>
+    <div>
+      <p>Purchased</p>
+    </div>
+  <% else %>  
+    <div>
+      <a href="/plans/<%= plan.id %>">Subscribe</a>
+    </div>
+  <% end %> 
+
+  <%= %>
+<% end %>

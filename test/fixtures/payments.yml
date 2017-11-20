@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  vendor: MyString
+  user_id: 1
+  token: MyString
+  last_4: 1
+  type: 
+
+two:
+  vendor: MyString
+  user_id: 1
+  token: MyString
+  last_4: 1
+  type: 
